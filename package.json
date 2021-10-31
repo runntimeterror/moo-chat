@@ -6,10 +6,16 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "date-fns": "^2.25.0",
+    "express": "^4.17.1",
     "react": "^17.0.2",
+    "react-bootstrap-sweetalert": "^5.2.0",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "semantic-ui-react": "^2.0.4",
+    "uuid": "^8.3.2",
+    "web-vitals": "^1.1.2",
+    "ws": "^8.2.3"
   },
   "main": "public/electron.js",
   "scripts": {
@@ -17,7 +23,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
+    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\" \"node app.js\"",
     "electron": "wait-on tcp:3000 && electron ."
   },
   "eslintConfig": {
