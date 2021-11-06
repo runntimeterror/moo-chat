@@ -46,8 +46,6 @@ function Chat({ username, roomname, socket }) {
 
   useEffect(scrollToBottom, [messages]);
 
-  console.log(messages, "mess");
-
   return (
     <div className="chat">
       <div className="user-name">
