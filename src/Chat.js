@@ -13,12 +13,15 @@ import { format } from "date-fns";
 import "./App.css";
 import UsersList from "./UsersList";
 import MessageBox from "./MessageBox";
+
 // Use for remote connections
 const configuration = {
   iceServers: [{ url: "stun:stun.1.google.com:19302" }]
 };
+
 // Use for local connections
 // const configuration = null;
+
 const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
   const [socketOpen, setSocketOpen] = useState(false);
   const [socketMessages, setSocketMessages] = useState([]);
@@ -34,8 +37,9 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
   const [message, setMessage] = useState("");
   const messagesRef = useRef({});
   const [messages, setMessages] = useState({});
+
   useEffect(() => {
-    webSocket.current = new WebSocket("ws://localhost:9000");
+    webSocket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
     webSocket.current.onmessage = message => {
       const data = JSON.parse(message.data);
       setSocketMessages(prev => [...prev, data]);
@@ -45,6 +49,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
     };
     return () => webSocket.current.close();
   }, []);
+
   useEffect(() => {
     let data = socketMessages.pop();
     if (data) {
@@ -75,12 +80,15 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       }
     }
   }, [socketMessages]);
+
   const closeAlert = () => {
     setAlert(null);
   };
+
   const send = data => {
     webSocket.current.send(JSON.stringify(data));
   };
+
   const handleLogin = () => {
     setLoggingIn(true);
     send({
@@ -88,12 +96,15 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       name
     });
   };
+
   const updateUsersList = ({ user }) => {
     setUsers(prev => [...prev, user]);
   };
+
   const removeUser = ({ user }) => {
     setUsers(prev => prev.filter(u => u.userName !== user.userName));
   }
+
   const handleDataChannelMessageReceived = ({ data }) => {
     const message = JSON.parse(data);
     const { name: user } = message;
@@ -110,6 +121,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       setMessages(newMessages);
     }
   };
+
   const onLogin = ({ success, message, users: loggedIn }) => {
     setLoggingIn(false);
     if (success) {
@@ -129,6 +141,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       //when the browser finds an ice candidate we send it to another peer
       localConnection.onicecandidate = ({ candidate }) => {
         let connectedTo = connectedRef.current;
+
         if (candidate && !!connectedTo) {
           send({
             name: connectedTo,
@@ -138,6 +151,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
         }
       };
       localConnection.ondatachannel = event => {
+        console.log("Data channel is created!");
         let receiveChannel = event.channel;
         receiveChannel.onopen = () => {
           console.log("Data channel is open and ready to be used.");
@@ -160,10 +174,12 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       );
     }
   };
+
   //when somebody wants to message us
   const onOffer = ({ offer, name }) => {
     setConnectedTo(name);
     connectedRef.current = name;
+
     connection
       .setRemoteDescription(new RTCSessionDescription(offer))
       .then(() => connection.createAnswer())
@@ -186,14 +202,17 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
         );
       });
   };
+
   //when another user answers to our offer
   const onAnswer = ({ answer }) => {
     connection.setRemoteDescription(new RTCSessionDescription(answer));
   };
+
   //when we got ice candidate from another user
   const onCandidate = ({ candidate }) => {
     connection.addIceCandidate(new RTCIceCandidate(candidate));
   };
+
   //when a user clicks the send message button
   const sendMsg = () => {
     const time = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
@@ -213,11 +232,17 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       messagesRef.current = userMessages;
       setMessages(userMessages);
     }
-    channel && channel.send(JSON.stringify(text));
+    channel.send(JSON.stringify(text));
     setMessage("");
   };
+
   const handleConnection = name => {
+    var dataChannelOptions = {
+      reliable: true
+    };
+
     let dataChannel = connection.createDataChannel("messenger");
+
     dataChannel.onerror = error => {
       setAlert(
         <SweetAlert
@@ -231,8 +256,10 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
         </SweetAlert>
       );
     };
+
     dataChannel.onmessage = handleDataChannelMessageReceived;
     updateChannel(dataChannel);
+
     connection
       .createOffer()
       .then(offer => connection.setLocalDescription(offer))
@@ -253,6 +280,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
         )
       );
   };
+
   const toggleConnection = userName => {
     if (connectedRef.current === userName) {
       setConnecting(true);
@@ -329,4 +357,5 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
     </div>
   );
 };
+
 export default Chat;
