@@ -90,7 +90,8 @@ function Chat({ username, roomname, socket }) {
           } else {
             return (
               <div className="message mess-right">
-                <p>{i.text} </p>
+                {i.text ? <p>{i.text}</p> : null}
+                {i.image ? <p><img width={150} src={i.image}></img></p> : null}
                 <span>{i.username}</span>
               </div>
             );
