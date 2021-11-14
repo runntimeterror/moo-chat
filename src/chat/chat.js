@@ -3,13 +3,14 @@ import { to_Decrypt, to_Encrypt } from "../aes.js";
 import { process } from "../store/action/index";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { useAlert } from 'react-alert'
 
 const IMAGE_MODERATION_API = `https://4cnspqd7ka.execute-api.us-east-1.amazonaws.com/default/image-moderation-lambda`
 
 function Chat({ username, roomname, socket }) {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
-
+  const alert = useAlert()
   const dispatch = useDispatch();
 
   const dispatchProcess = (encrypt, msg, cipher) => {
@@ -64,7 +65,7 @@ function Chat({ username, roomname, socket }) {
         if (moderationResult.ImageModeration === `pass`) {
           socket.emit("chat", { image: e.target.result });
         } else {
-          console.error(moderationResult.Description)
+          alert.show(moderationResult.Description, { type: 'error' })
         }
       } catch (ex) {
         console.error(ex)
