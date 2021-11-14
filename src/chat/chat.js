@@ -17,24 +17,48 @@ function Chat({ username, roomname, socket }) {
   useEffect(() => {
     socket.on("message", (data) => {
       //decypt
-      const ans = to_Decrypt(data.text, data.username);
-      dispatchProcess(false, ans, data.text);
-      console.log(ans);
       let temp = messages;
-      temp.push({
-        userId: data.userId,
-        username: data.username,
-        text: ans,
-      });
+      if (data.payload.text) {
+        const ans = to_Decrypt(data.payload.text, data.username);
+        dispatchProcess(false, ans, data.payload.text);
+        console.log(ans);
+        temp.push({
+          userId: data.userId,
+          username: data.username,
+          text: ans,
+        });
+      } else if (data.payload.image) {
+        temp.push({
+          userId: data.userId,
+          username: data.username,
+          image: data.payload.image,
+        });
+      }
       setMessages([...temp]);
     });
   }, [socket]);
+
+  const onImageChange = (event) => {
+    //check image moderation server
+    const file = event.target.files[0]
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      // binary data
+      socket.emit("chat", { image: e.target.result });
+    };
+    reader.onerror = function (e) {
+      // error occurred
+      console.log('Error : ' + e.type);
+    };
+    if (file)
+      reader.readAsDataURL(file);
+  }
 
   const sendData = () => {
     if (text !== "") {
       //encrypt here
       const ans = to_Encrypt(text);
-      socket.emit("chat", ans);
+      socket.emit("chat", { text: ans });
       setText("");
     }
   };
@@ -58,14 +82,16 @@ function Chat({ username, roomname, socket }) {
           if (i.username === username) {
             return (
               <div className="message">
-                <p>{i.text}</p>
+                {i.text ? <p>{i.text}</p> : null}
+                {i.image ? <p><img width={150} src={i.image}></img></p> : null}
                 <span>{i.username}</span>
               </div>
             );
           } else {
             return (
               <div className="message mess-right">
-                <p>{i.text} </p>
+                {i.text ? <p>{i.text}</p> : null}
+                {i.image ? <p><img width={150} src={i.image}></img></p> : null}
                 <span>{i.username}</span>
               </div>
             );
@@ -74,6 +100,7 @@ function Chat({ username, roomname, socket }) {
         <div ref={messagesEndRef} />
       </div>
       <div className="send">
+
         <input
           placeholder="enter your message"
           value={text}
@@ -83,7 +110,18 @@ function Chat({ username, roomname, socket }) {
               sendData();
             }
           }}
-        ></input>
+        />
+        <div>
+          <label htmlFor='chatImage'>
+            <i className="fas fa-images attach-images"></i>
+          </label>
+          <input type="file"
+            className="image-input"
+            id="chatImage"
+            accept="image/png, image/jpeg"
+            name="chatImage"
+            onChange={onImageChange} />
+        </div>
         <button onClick={sendData}>Send</button>
       </div>
     </div>
