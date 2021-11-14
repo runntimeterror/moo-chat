@@ -11,14 +11,8 @@ import AlertTemplate from 'react-alert-template-basic'
 
 const LOCAL_SERVER = `http://localhost:8000`
 const SOCKET_SERVER = `http://bbc8-2600-1700-4a30-d5c0-dcda-2de7-befc-ceb6.ngrok.io`
-
+const socket = io(SOCKET_SERVER);
 function Appmain(props) {
-  const socket = io(SOCKET_SERVER);
-  socket.auth = {
-    username: props.match.params.username,
-    userId: props.user.username
-  }
-  socket.connect()
   return (
     <React.Fragment>
       <Chat
@@ -33,6 +27,12 @@ function Appmain(props) {
 function App() {
   const [authState, setAuthState] = useState();
   const [user, setUser] = useState();
+
+  socket.auth = {
+    username: user.attributes.given_name,
+    userId: user.username
+  }
+  socket.connect()
 
   useEffect(() => {
     return onAuthUIStateChange((nextAuthState, authData) => {
