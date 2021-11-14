@@ -1,5 +1,6 @@
 import Chat from "./chat/chat";
 import Home from "./home/home";
+import { isEmpty } from 'lodash'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.scss";
 import React, { useEffect, useState } from "react";
@@ -32,7 +33,7 @@ function App() {
     return onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData)
-      if (user.attributes) {
+      if (user.attributes && authState === AuthState.SignedIn) {
         socket.auth = {
           username: user.attributes.given_name,
           userId: user.username
@@ -50,7 +51,7 @@ function App() {
     transition: transitions.SCALE
   }
 
-  return authState === AuthState.SignedIn && user ? (
+  return authState === AuthState.SignedIn && !isEmpty(user) ? (
     <div className="App">
       <Router>
         <AlertProvider template={AlertTemplate} {...options}>
