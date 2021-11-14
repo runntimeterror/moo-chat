@@ -30,14 +30,24 @@ function App() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    return onAuthUIStateChange((nextAuthState, authData) => {
+    const sessionID = localStorage.getItem("sessionID")
+    if (sessionID) {
+      socket.auth = { sessionID };
+    }
+    socket.on("session", ({ sessionID, userID }) => {
+      socket.auth = { sessionID }
+      localStorage.setItem("sessionID", sessionID)
+      socket.userID = userID
+    })
+
+    onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData)
       if (user.attributes && authState === AuthState.SignedIn) {
-        socket.auth = {
+        socket.auth = Object.assign({}, socket.auth, {
           username: user.attributes.given_name,
           userId: user.username
-        }
+        })
         socket.connect()
       }
     });
