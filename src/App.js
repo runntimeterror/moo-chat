@@ -32,11 +32,13 @@ function App() {
     return onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData)
-      socket.auth = {
-        username: user.attributes.given_name,
-        userId: user.username
+      if (user.attributes) {
+        socket.auth = {
+          username: user.attributes.given_name,
+          userId: user.username
+        }
+        socket.connect()
       }
-      socket.connect()
     });
   }, []);
 
