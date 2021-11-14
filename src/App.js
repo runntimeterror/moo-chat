@@ -7,8 +7,8 @@ import io from "socket.io-client";
 import { AmplifyAuthenticator, AmplifySignUp, AmplifySignOut } from '@aws-amplify/ui-react'
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 
-const socket = io.connect('http://localhost:8000');
 function Appmain(props) {
+  const socket = io.connect('http://localhost:8000');
   return (
     <React.Fragment>
       <Chat
@@ -37,7 +37,7 @@ function App() {
         <div className="App">
           <Switch>
             <Route path="/" exact>
-              <Home socket={socket} />
+              <Home />
             </Route>
             <Route path="/chat/:roomname/:username" component={Appmain} />
           </Switch>

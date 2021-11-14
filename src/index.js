@@ -6,6 +6,9 @@ import React from "react";
 import { Provider } from "react-redux";
 import Amplify from 'aws-amplify';
 import * as Config from './config';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 Amplify.configure({
   Auth: {
