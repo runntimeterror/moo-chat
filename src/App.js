@@ -28,16 +28,15 @@ function App() {
   const [authState, setAuthState] = useState();
   const [user, setUser] = useState();
 
-  socket.auth = {
-    username: user.attributes.given_name,
-    userId: user.username
-  }
-  socket.connect()
-
   useEffect(() => {
     return onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData)
+      socket.auth = {
+        username: user.attributes.given_name,
+        userId: user.username
+      }
+      socket.connect()
     });
   }, []);
 
