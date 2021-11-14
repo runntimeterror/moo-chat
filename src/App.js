@@ -26,7 +26,7 @@ function Appmain(props) {
 
 function App() {
   const [authState, setAuthState] = useState();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     return onAuthUIStateChange((nextAuthState, authData) => {
