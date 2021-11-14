@@ -3,7 +3,7 @@ import Home from "./home/home";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.scss";
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react'
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
@@ -13,7 +13,12 @@ const LOCAL_SERVER = `http://localhost:8000`
 const SOCKET_SERVER = `http://bbc8-2600-1700-4a30-d5c0-dcda-2de7-befc-ceb6.ngrok.io`
 
 function Appmain(props) {
-  const socket = io.connect(LOCAL_SERVER);
+  const socket = io(SOCKET_SERVER);
+  socket.auth = {
+    username: props.match.params.username,
+    userId: props.user.username
+  }
+  socket.connect()
   return (
     <React.Fragment>
       <Chat
@@ -24,6 +29,7 @@ function Appmain(props) {
     </React.Fragment>
   );
 }
+
 function App() {
   const [authState, setAuthState] = useState();
   const [user, setUser] = useState();
@@ -50,9 +56,12 @@ function App() {
           <div className="App">
             <Switch>
               <Route path="/" exact>
-                <Home />
+                <Home user={user} />
               </Route>
-              <Route path="/chat/:roomname/:username" component={Appmain} />
+              <Route path="/chat/:roomname/:username"
+                render={(props) => {
+                  return <Appmain {...props} user={user} />
+                }} />
             </Switch>
           </div>
         </AlertProvider>
