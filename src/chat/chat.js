@@ -4,6 +4,8 @@ import { process } from "../store/action/index";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
+const IMAGE_MODERATION_API = `https://4cnspqd7ka.execute-api.us-east-1.amazonaws.com/default/image-moderation-lambda`
+
 function Chat({ username, roomname, socket }) {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
@@ -47,9 +49,26 @@ function Chat({ username, roomname, socket }) {
     //check image moderation server
     const file = event.target.files[0]
     var reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
       // binary data
-      socket.emit("chat", { image: e.target.result });
+      const imageBinary = e.target.result
+      //Check if it is safe to send image
+      const base64Binary = imageBinary.split(`base64,`)[1]
+      try {
+        const response = await fetch(IMAGE_MODERATION_API, {
+          method: `POST`, body: JSON.stringify({
+            image: base64Binary
+          })
+        })
+        const moderationResult = await response.json()
+        if (moderationResult.ImageModeration === `pass`) {
+          socket.emit("chat", { image: e.target.result });
+        } else {
+          console.error(moderationResult.Description)
+        }
+      } catch (ex) {
+        console.error(ex)
+      }
     };
     reader.onerror = function (e) {
       // error occurred
