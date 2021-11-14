@@ -14,6 +14,11 @@ function Chat({ username, roomname, socket }) {
     dispatch(process(encrypt, msg, cipher));
   };
 
+  // emit the joinRoom message when this component is loaded (taking username and password form path)
+  useEffect(() => {
+    socket.emit("joinRoom", { username, roomname });
+  }, []);
+
   useEffect(() => {
     socket.on("message", (data) => {
       //decypt
@@ -78,10 +83,10 @@ function Chat({ username, roomname, socket }) {
         </h2>
       </div>
       <div className="chat-message">
-        {messages.map((i) => {
+        {messages.map((i, index) => {
           if (i.username === username) {
             return (
-              <div className="message">
+              <div key={index} className="message">
                 {i.text ? <p>{i.text}</p> : null}
                 {i.image ? <p><img width={150} src={i.image}></img></p> : null}
                 <span>{i.username}</span>
