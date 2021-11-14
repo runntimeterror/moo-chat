@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./home.scss";
 import { Link } from "react-router-dom";
 
-function Homepage({ socket }) {
+function Homepage() {
   const [username, setusername] = useState("");
   const [roomname, setroomname] = useState("");
   
