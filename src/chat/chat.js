@@ -14,7 +14,7 @@ function Chat({ username, roomname, socket }) {
     dispatch(process(encrypt, msg, cipher));
   };
 
-  // emit the joinRoom message when this component is loaded (taking username and password form path)
+  // emit the joinRoom message when this component is loaded (taking username and roomname form path)
   useEffect(() => {
     socket.emit("joinRoom", { username, roomname });
   }, []);
