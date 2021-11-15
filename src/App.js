@@ -43,7 +43,7 @@ function App() {
     onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData)
-      if (authData.attributes && nextAuthState === AuthState.SignedIn) {
+      if (authData && authData.attributes && nextAuthState === AuthState.SignedIn) {
         socket.auth = Object.assign({}, socket.auth, {
           username: authData.attributes.given_name,
           userId: authData.username
