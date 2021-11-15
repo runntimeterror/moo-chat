@@ -11,7 +11,7 @@ import { transitions, positions, Provider as AlertProvider } from 'react-alert'
 import AlertTemplate from 'react-alert-template-basic'
 
 const LOCAL_SERVER = `http://localhost:8000`
-const SOCKET_SERVER = `http://bbc8-2600-1700-4a30-d5c0-dcda-2de7-befc-ceb6.ngrok.io`
+const SOCKET_SERVER = `http://0bf8-2600-1700-4a30-d5c0-dcda-2de7-befc-ceb6.ngrok.io`
 const socket = io(SOCKET_SERVER);
 function Appmain(props) {
   return (
@@ -43,10 +43,10 @@ function App() {
     onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData)
-      if (user.attributes && authState === AuthState.SignedIn) {
+      if (authData.attributes && nextAuthState === AuthState.SignedIn) {
         socket.auth = Object.assign({}, socket.auth, {
-          username: user.attributes.given_name,
-          userId: user.username
+          username: authData.attributes.given_name,
+          userId: authData.username
         })
         socket.connect()
       }
