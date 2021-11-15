@@ -27,6 +27,7 @@ jobs:
         REACT_APP_AMPLIFY_AUTH_USER_POOL_CLIENT_ID: ${{ secrets.AMPLIFY_USER_POOL_CLIENT_ID }}
         REACT_APP_AMPLIFY_AUTH_USER_POOL_ID: ${{ secrets.AMPLIFY_USER_POOL_ID }}
       run: |
+        npm install
         npm run build
     
     - name: Upload to S3 
