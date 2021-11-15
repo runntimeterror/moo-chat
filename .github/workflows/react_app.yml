@@ -28,9 +28,10 @@ jobs:
         REACT_APP_AMPLIFY_AUTH_USER_POOL_ID: ${{ secrets.AMPLIFY_USER_POOL_ID }}
       run: |
         npm install
-        npm run build
+        CI=false npm run build
     
     - name: Upload to S3 
+      if: github.event.pull_request.merged == 'true' || github.event_name == 'push'
       env:
         BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
         DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
