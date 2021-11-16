@@ -3,7 +3,7 @@
 name: Moochat CI/CD
 
 on:
-  push: 
+  push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
@@ -29,8 +29,8 @@ jobs:
       run: |
         npm install
         CI=false npm run build
-    
-    - name: Upload to S3 
+
+    - name: Upload to S3
       if: github.event.pull_request.merged == 'true' || github.event_name == 'push'
       env:
         BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
@@ -42,7 +42,7 @@ jobs:
         aws s3 sync ./build/static "s3://$BUCKET_NAME/static" --cache-control max-age=3156000
         aws s3 sync ./build/ "s3://$BUCKET_NAME" --exclude "static/*" --cache-control no-cache
         aws cloudfront create-invalidation \
-          --distribution-id "$DISTRIBUTION_ID"
-          --paths '/*'
-          --query Invalidation.Id
+          --distribution-id "$DISTRIBUTION_ID" \
+          --paths '/*' \
+          --query Invalidation.Id \
           --output text
