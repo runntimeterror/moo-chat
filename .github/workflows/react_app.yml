@@ -24,15 +24,11 @@ jobs:
     - name: build
       env:
         REACT_APP_AMPLIFY_AUTH_REGION: ${{ secrets.AMPLIFY_AUTH_REGION }}
-        REACT_APP_AMPLIFY_AUTH_USER_POOL_CLIENT_ID: ${{ secrets.AMPLIFY_USER_POOL_CLIENT_ID }}
-        REACT_APP_AMPLIFY_AUTH_USER_POOL_ID: ${{ secrets.AMPLIFY_USER_POOL_ID }}
+        REACT_APP_AMPLIFY_AUTH_USER_POOL_CLIENT_ID: ${{ secrets.AMPLIFY_AUTH_USER_POOL_CLIENT_ID }}
+        REACT_APP_AMPLIFY_AUTH_USER_POOL_ID: ${{ secrets.AMPLIFY_AUTH_USER_POOL_ID }}
       run: |
         npm install
-        CI=false \
-          REACT_APP_AMPLIFY_AUTH_REGION="${{ secrets.AMPLIFY_AUTH_REGION }}" \
-          REACT_APP_AMPLIFY_AUTH_USER_POOL_CLIENT_ID="${{ secrets.AMPLIFY_USER_POOL_CLIENT_ID }}" \
-          REACT_APP_AMPLIFY_AUTH_USER_POOL_ID="${{ secrets.AMPLIFY_USER_POOL_ID }}" \
-          npm run build
+        CI=false npm run build
 
     - name: Upload to S3
       if: github.event.pull_request.merged == 'true' || github.event_name == 'push'
