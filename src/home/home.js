@@ -14,7 +14,7 @@ function Homepage(props) {
         value={roomname}
         onChange={(e) => setroomname(e.target.value)}
       ></input>
-      <Link to={`/chat/${roomname}/${props.user.attributes.given_name}`}>
+      <Link to={`/chat/${roomname}/${get(props, `user.attributes.given_name`)}`}>
         <button>Join</button>
       </Link>
     </div>
