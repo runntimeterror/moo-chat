@@ -7,21 +7,6 @@ import { uuidv4 } from '../utils'
 export default function Voice() {
   const [recordState, setRecordState] = useState()
   const alert = useAlert()
-  const IDENTITY_POOL_ID = `us-east-1:7865814d-f248-428e-b1e8-88981b16f12f`
-  const BUCKET_NAME = `moo-chat-voice-support`
-  const REGION = `us-east-1`
-
-  // AWS.config.update({
-  //   region: REGION,
-  //   credentials: AWS.CognitoIdentityCredentials({ apiVersion: '2016-04-18', IdentityPoolId: IDENTITY_POOL_ID })
-  // })
-
-  // const S3 = new AWS.S3({
-  //   apiVersion: '2006-03-01',
-  //   params: {
-  //     Bucket: BUCKET_NAME
-  //   }
-  // })
 
   const toggleRecording = () => {
     if (!recordState || recordState === RecordState.STOP) {
@@ -31,16 +16,18 @@ export default function Voice() {
     }
   }
 
-  const onStop = (audioData) => {
-
+  const onStop = async (audioData) => {
     alert.show(`Processing your voice...`, { type: 'info', timeout: 5000 })
-    const fileName = `${uuidv4()}.wav`
-    // S3.upload({ Key: `original-voice/${fileName}`, Body: audioData.blob }, (err, data) => {
-    //   if (err) {
-    //     alert.show(`Error uploading`, { type: 'error' })
-    //   }
-    // });
-    console.log(audioData)
+    try {
+      const signedLambdaResponse = await fetch(`https://jm58k3wyo5.execute-api.us-east-1.amazonaws.com/default/moo-chat-signed-url-lambda`)
+      const signedUrl = await signedLambdaResponse.text()
+      await fetch(signedUrl, { method: `PUT`, body: audioData.blob })
+    }
+    catch (ex) {
+      alert.show('Voice processing failed', { type: `error` })
+      console.log(ex)
+    }
+
   }
 
   return (<div>
