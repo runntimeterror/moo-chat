@@ -8,6 +8,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Releases
+Released to S3 and CF via Github Actions. To trigger a release, tag a commit and push tags to master.
+```
+$ git checkout master
+$ git tag -a v{semver} -m "description"
+$ git push --tags
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
