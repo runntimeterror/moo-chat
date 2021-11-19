@@ -38,7 +38,6 @@ function App() {
     }
 
     socket.on("session", ({ sessionID, userID }) => {
-      console.log("received sessionID");
       setSessionID(sessionID);
       localStorage.setItem("sessionID", sessionID);
     });
