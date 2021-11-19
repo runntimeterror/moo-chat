@@ -9,10 +9,9 @@ import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react'
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
 import AlertTemplate from 'react-alert-template-basic'
+import * as Config from './config';
 
-const LOCAL_SERVER = `http://localhost:8000`
-const SOCKET_SERVER = `http://0bf8-2600-1700-4a30-d5c0-dcda-2de7-befc-ceb6.ngrok.io`
-const socket = io(SOCKET_SERVER);
+const socket = io(Config.SOCKET_SERVER);
 function Appmain(props) {
   return (
     <React.Fragment>
@@ -25,33 +24,46 @@ function Appmain(props) {
   );
 }
 
+
+
 function App() {
   const [authState, setAuthState] = useState();
-  const [user, setUser] = useState({});
+  const [authData, setAuthData] = useState({});
+  const [sessionID, setSessionID] = useState();
 
   useEffect(() => {
-    const sessionID = localStorage.getItem("sessionID")
-    if (sessionID) {
-      socket.auth = { sessionID };
+    const lsSessionID = localStorage.getItem("sessionID");
+    if (lsSessionID) {
+      setSessionID(lsSessionID);
     }
+
     socket.on("session", ({ sessionID, userID }) => {
-      socket.auth = { sessionID }
-      localStorage.setItem("sessionID", sessionID)
-      socket.userID = userID
-    })
+      console.log("received sessionID");
+      setSessionID(sessionID);
+      localStorage.setItem("sessionID", sessionID);
+    });
 
     onAuthUIStateChange((nextAuthState, authData) => {
-      setAuthState(nextAuthState);
-      setUser(authData)
       if (authData && authData.attributes && nextAuthState === AuthState.SignedIn) {
         socket.auth = Object.assign({}, socket.auth, {
           username: authData.attributes.given_name,
           userId: authData.username
-        })
-        socket.connect()
+        });
+        socket.connect();
+
+        setAuthState(nextAuthState);
+        setAuthData(authData);
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (sessionID && authState === AuthState.SignedIn) {
+      socket.disconnect();
+      socket.auth = { sessionID: sessionID, username: socket.auth.given_name, userId: socket.auth.username };
+      socket.connect();
+    }
+  }, [sessionID, authState]);
 
   const options = {
     position: positions.BOTTOM_CENTER,
@@ -61,18 +73,18 @@ function App() {
     transition: transitions.SCALE
   }
 
-  return authState === AuthState.SignedIn && !isEmpty(user) ? (
+  return authState === AuthState.SignedIn && !isEmpty(authData) ? (
     <div className="App">
       <Router>
         <AlertProvider template={AlertTemplate} {...options}>
           <div className="App">
             <Switch>
               <Route path="/" exact>
-                <Home user={user} />
+                <Home user={authData} />
               </Route>
               <Route path="/chat/:roomname/:username"
                 render={(props) => {
-                  return <Appmain {...props} user={user} />
+                  return <Appmain {...props} user={authData} />
                 }} />
             </Switch>
           </div>

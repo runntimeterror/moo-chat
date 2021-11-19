@@ -26,6 +26,7 @@ jobs:
         REACT_APP_AMPLIFY_AUTH_REGION: ${{ secrets.AMPLIFY_AUTH_REGION }}
         REACT_APP_AMPLIFY_AUTH_USER_POOL_CLIENT_ID: ${{ secrets.AMPLIFY_AUTH_USER_POOL_CLIENT_ID }}
         REACT_APP_AMPLIFY_AUTH_USER_POOL_ID: ${{ secrets.AMPLIFY_AUTH_USER_POOL_ID }}
+        REACT_APP_SOCKET_SERVER: ${{ secrets.SOCKET_SERVER }}
       run: |
         npm install
         CI=false npm run build

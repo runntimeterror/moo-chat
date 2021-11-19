@@ -16,6 +16,7 @@ function Chat({ username, roomname, socket }) {
 
   // emit the joinRoom message when this component is loaded (taking username and roomname form path)
   useEffect(() => {
+    console.log("joining room");
     socket.emit("joinRoom", { username, roomname });
   }, []);
 
