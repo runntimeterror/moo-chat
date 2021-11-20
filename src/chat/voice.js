@@ -1,8 +1,6 @@
 import { useAlert } from 'react-alert'
 import React, { useState } from 'react'
 import AudioReactRecorder, { RecordState } from 'audio-react-recorder'
-import { uuidv4 } from '../utils'
-//import AWS from 'aws-sdk'
 
 export default function Voice({ sessionID }) {
   const [recordState, setRecordState] = useState()
