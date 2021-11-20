@@ -4,6 +4,7 @@ import { process } from "../store/action/index";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import ImageModeration from "./image-moderation";
+import Voice from './voice'
 
 function Chat({ username, roomname, socket }) {
   const [text, setText] = useState("");
@@ -100,6 +101,7 @@ function Chat({ username, roomname, socket }) {
             }
           }}
         />
+        <Voice socket={socket} />
         <ImageModeration socket={socket} />
         <button onClick={sendData}>Send</button>
       </div>

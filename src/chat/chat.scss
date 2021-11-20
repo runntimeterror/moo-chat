@@ -104,6 +104,18 @@
     cursor: pointer;
   }
 
+  .record-voice {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #404450;
+    height: 100%;
+    cursor: pointer;
+    &.recording {
+      color: red;
+    }
+  }
+
   .image-input {
     display: none;
   }
@@ -133,4 +145,8 @@
       }
     }
   }
+}
+
+.audio-react-recorder {
+  display: none;
 }
