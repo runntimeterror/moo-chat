@@ -7,34 +7,40 @@ export default function ImageModeration(props) {
   const onImageChange = (event) => {
     //check image moderation server
     const file = event.target.files[0]
-    var reader = new FileReader();
-    reader.onload = async function (e) {
-      // binary data
-      const imageBinary = e.target.result
-      //Check if it is safe to send image
-      const base64Binary = imageBinary.split(`base64,`)[1]
-      try {
-        const response = await fetch(IMAGE_MODERATION_API, {
-          method: `POST`, body: JSON.stringify({
-            image: base64Binary
+    if (file && file.size < 1048576) { //1 MB
+      var reader = new FileReader();
+      reader.onload = async function (e) {
+        // binary data
+        const imageBinary = e.target.result
+        //Check if it is safe to send image
+        const base64Binary = imageBinary.split(`base64,`)[1]
+        try {
+          const response = await fetch(IMAGE_MODERATION_API, {
+            method: `POST`, body: JSON.stringify({
+              image: base64Binary
+            })
           })
-        })
-        const moderationResult = await response.json()
-        if (moderationResult.ImageModeration === `pass`) {
-          socket.emit("chat", { image: e.target.result });
-        } else {
-          alert.show(moderationResult.Description, { type: 'error' })
+          const moderationResult = await response.json()
+          if (moderationResult.ImageModeration === `pass`) {
+            socket.emit("chat", { image: e.target.result });
+          } else {
+            alert.show(moderationResult.Description, { type: 'error' })
+          }
+        } catch (ex) {
+          console.error(ex)
         }
-      } catch (ex) {
-        console.error(ex)
+      };
+      reader.onerror = function (e) {
+        // error occurred
+        alert.show(`There was an error`, { type: 'error' })
+      };
+      if (file) {
+        reader.readAsDataURL(file);
       }
-    };
-    reader.onerror = function (e) {
-      // error occurred
-      console.log('Error : ' + e.type);
-    };
-    if (file)
-      reader.readAsDataURL(file);
+    }
+    else {
+      alert.show(`Sorry, file is too large`, { type: 'error' })
+    }
   }
   return (<div>
     <label htmlFor='chatImage'>
