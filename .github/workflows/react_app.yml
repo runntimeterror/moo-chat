@@ -5,6 +5,8 @@ name: Moochat CI/CD
 on:
   push:
     branches: [ master ]
+    tags:
+    - '*'
   pull_request:
     branches: [ master ]
 
@@ -26,12 +28,13 @@ jobs:
         REACT_APP_AMPLIFY_AUTH_REGION: ${{ secrets.AMPLIFY_AUTH_REGION }}
         REACT_APP_AMPLIFY_AUTH_USER_POOL_CLIENT_ID: ${{ secrets.AMPLIFY_AUTH_USER_POOL_CLIENT_ID }}
         REACT_APP_AMPLIFY_AUTH_USER_POOL_ID: ${{ secrets.AMPLIFY_AUTH_USER_POOL_ID }}
+        REACT_APP_SOCKET_SERVER: ${{ secrets.SOCKET_SERVER }}
       run: |
         npm install
         CI=false npm run build
 
     - name: Upload to S3
-      if: github.event.pull_request.merged == 'true' || github.event_name == 'push'
+      if: startsWith(github.ref, 'refs/tags/v') && (github.event.pull_request.merged == 'true' || github.event_name == 'push')
       env:
         BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
         DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
