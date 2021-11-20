@@ -19,6 +19,7 @@ function Appmain(props) {
         username={props.match.params.username}
         roomname={props.match.params.roomname}
         socket={socket}
+        sessionID={props.sessionID}
       />
     </React.Fragment>
   );
@@ -83,7 +84,7 @@ function App() {
               </Route>
               <Route path="/chat/:roomname/:username"
                 render={(props) => {
-                  return <Appmain {...props} user={authData} />
+                  return <Appmain {...props} user={authData} sessionID={sessionID} />
                 }} />
             </Switch>
           </div>

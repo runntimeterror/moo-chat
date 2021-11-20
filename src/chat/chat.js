@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import ImageModeration from "./image-moderation";
 import Voice from './voice'
 
-function Chat({ username, roomname, socket }) {
+function Chat({ username, roomname, socket, sessionID }) {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
@@ -101,7 +101,7 @@ function Chat({ username, roomname, socket }) {
             }
           }}
         />
-        <Voice socket={socket} />
+        <Voice sessionID={sessionID} />
         <ImageModeration socket={socket} />
         <button onClick={sendData}>Send</button>
       </div>

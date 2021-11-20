@@ -1,10 +1,8 @@
 import { useAlert } from 'react-alert'
 import React, { useState } from 'react'
 import AudioReactRecorder, { RecordState } from 'audio-react-recorder'
-import { uuidv4 } from '../utils'
-//import AWS from 'aws-sdk'
 
-export default function Voice() {
+export default function Voice({ sessionID }) {
   const [recordState, setRecordState] = useState()
   const alert = useAlert()
 
@@ -20,7 +18,7 @@ export default function Voice() {
     if (audioData.blob.size < 1048576) {//1 MB
       alert.show(`Processing your voice...`, { type: 'info', timeout: 5000 })
       try {
-        const signedLambdaResponse = await fetch(`https://jm58k3wyo5.execute-api.us-east-1.amazonaws.com/default/moo-chat-signed-url-lambda`)
+        const signedLambdaResponse = await fetch(`https://jm58k3wyo5.execute-api.us-east-1.amazonaws.com/default/moo-chat-signed-url-lambda?sessionID=${sessionID}`)
         const signedUrl = await signedLambdaResponse.text()
         await fetch(signedUrl, { method: `PUT`, body: audioData.blob })
       }
