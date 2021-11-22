@@ -1,24 +1,35 @@
 # CMPE-281 Project 2 - Moo Chat
 
+- University Project for www.sjsu.edu. 
+- Course: [Cloud Technology](http://info.sjsu.edu/web-dbgen/catalog/courses/CMPE281.html)
+- Professor: [Sanjay Garje](https://www.linkedin.com/in/sanjaygarje/)
+
+
+Students:
 - [Soham Bhattacharjee](mailto:soham.bhattacharjee@sjsu.edu)
 - [Gabriel Chen](mailto:gabriel.chen@sjsu.edu)
 - [Rajat Banerjee](mailto:rajat.banerjee@sjsu.edu)
 - [Rohan Patel](mailto:rohan.patel@sjsu.edu)
 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Project
+MooChat is a scalable websocket based chat application, hosted in AWS. 
+It has end to end encryption for all text messages. It supports text, image and voice messaging.
 
-## Releases
-Released to S3 and CF via Github Actions. To trigger a release, tag a commit and push tags to master.
-```
-$ git checkout master
-$ git tag -a v{semver} -m "description"
-$ git push --tags
-```
+Any chat text, image or audio shared on MooChat platform is not persisted anywhere, and it is only on the client. This ensures complete privacy for the clients.
 
-## Available Scripts
-
-In the project directory, you can run:
+Any image uploaded via MooChat is subject to moderation. It will not allow to send images that depict `Explicit Nudity`,
+    `Suggestive`,
+    `Violence`,
+    `Visually Disturbing`,
+    `Rude Gestures`,
+    `Drugs`,
+    `Tobacco`,
+    `Alcohol`,
+    `Gambling`,
+    `Hate Symbols`
+    
+Voice messages sent through MooChat will be translated to English. To achieve this, the audio file will be stored in S3 momentarily, and then be removed after 1 day.
 
 ### `npm start`
 
@@ -36,9 +47,3 @@ Launches the electron project in watch mode.
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-### `npm run electron`
-Starts the electron application.
