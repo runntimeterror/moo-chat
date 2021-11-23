@@ -39,6 +39,13 @@ function Chat({ username, roomname, socket, sessionID }) {
           username: data.username,
           image: data.payload.image,
         });
+      } else if (data.payload.audio) {
+        const blob = new Blob([data.payload.audio], { type: "audio/mp3" });
+        temp.push({
+          userId: data.userId,
+          username: data.username,
+          audio: window.URL.createObjectURL(blob)
+        })
       }
       setMessages([...temp]);
     });
@@ -74,6 +81,7 @@ function Chat({ username, roomname, socket, sessionID }) {
               <div key={index} className="message">
                 {i.text ? <p>{i.text}</p> : null}
                 {i.image ? <p><img width={150} src={i.image}></img></p> : null}
+                {i.audio ? <p><audio controls src={i.audio}></audio></p> : null}
                 <span>{i.username}</span>
               </div>
             );
@@ -82,6 +90,7 @@ function Chat({ username, roomname, socket, sessionID }) {
               <div className="message mess-right">
                 {i.text ? <p>{i.text}</p> : null}
                 {i.image ? <p><img width={150} src={i.image}></img></p> : null}
+                {i.audio ? <p><audio controls src={i.audio}></audio></p> : null}
                 <span>{i.username}</span>
               </div>
             );
