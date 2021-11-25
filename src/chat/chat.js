@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import ImageModeration from "./image-moderation";
 import Voice from './voice'
+import Paper from '@mui/material/Paper'
 
 function Chat({ username, roomname, socket, sessionID }) {
   const [text, setText] = useState("");
@@ -68,7 +69,7 @@ function Chat({ username, roomname, socket, sessionID }) {
   useEffect(scrollToBottom, [messages]);
 
   return (
-    <div className="chat">
+    <Paper elevation={3} className="chat">
       <div className="user-name">
         <h2>
           {username} <span style={{ fontSize: "0.7rem" }}>in {roomname}</span>
@@ -114,7 +115,7 @@ function Chat({ username, roomname, socket, sessionID }) {
         <ImageModeration socket={socket} />
         <button onClick={sendData}>Send</button>
       </div>
-    </div>
+    </Paper>
   );
 }
 export default Chat;
